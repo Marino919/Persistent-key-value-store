@@ -134,9 +134,21 @@ static int table_remove(KVStore *kvs, const char *key) {
 
     return 0;
 }
+static void close_chain(Entry *chain) {
+    if (chain == NULL) return;
+
+    if (chain->entry != NULL) {
+        close_chain(chain->entry);
+    }
+    close_entry(chain);
+}
 
 void kv_close( KVStore *kvs) {
-
+    for (size_t i = 0; i < kvs->capacity; i++) {
+        close_chain((kvs->buckets)[i]);
+    }
+    free(kvs->buckets);
+    free(kvs);
 }
 
 
