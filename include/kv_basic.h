@@ -1,0 +1,11 @@
+#ifndef KVSTORE_KV_BASIC_H
+#define KVSTORE_KV_BASIC_H
+#include <stdio.h>
+#include <string.h>
+#include "door.h"
+#include "get.h"
+#include "helpers.h"
+#include "print_store.h"
+#include "put.h"
+#include "remove.h"
+#endif //KVSTORE_KV_BASIC_H

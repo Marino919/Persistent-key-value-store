@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-
-#include "kvstore.h"
+#include "kv_basic.h"
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {

@@ -19,4 +19,9 @@ put 017 n
 put 018 o
 put 019 p
 put 020 u
+put 021 v
+put 022 w
+put 023 x
+put 024 y
+put 025 z
 close
