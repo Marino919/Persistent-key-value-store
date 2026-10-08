@@ -17,4 +17,5 @@ int kv_put( KVStore *kvs, const char *key, const char *value);
 const char *kv_get(KVStore *kvs, const char *key);
 int kv_delete( KVStore *kvs, const char *key);
 size_t kv_count(const KVStore *kvs);
+void kv_print_store(KVStore *kvs);
 

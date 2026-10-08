@@ -1,0 +1,60 @@
+put 000 x
+put 001 y
+put 002 z
+put 003 m
+put 004 n
+put 005 b
+put 006 c
+put 007 d
+put 008 e
+put 009 f
+put 010 g
+put 011 h
+put 012 i
+put 013 j
+put 014 k
+put 015 l
+put 016 m
+put 017 n
+put 018 o
+put 019 p
+put 020 u
+put 021 v
+put 022 w
+put 023 x
+put 024 y
+put 025 z
+delete 021
+delete 022
+delete 023
+delete 024
+delete 025
+delete 025
+delete 024
+delete 026
+delete 027
+delete 017
+delete 018
+delete 020
+delete 010
+delete 019
+put 021 a
+put 022 b
+put 023 c
+delete a b c
+put 021
+put 021 c
+put 022 c d e
+set 024 a
+set 024
+put 024
+delete
+put 024 d
+delete 0
+delete 021 b
+delete 021
+delete 007
+delete 001
+delete 014
+delete 015
+close
