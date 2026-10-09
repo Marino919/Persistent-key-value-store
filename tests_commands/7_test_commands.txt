@@ -1,0 +1,27 @@
+put 000 x
+put 001 y
+put 002 z
+put 003 m
+put 004 n
+put 005 b
+put 006 c
+put 007 d
+put 008 e
+put 009 f
+put 010 g
+put 011 h
+put 012 i
+put 013 j
+put 014 k
+put 015 l
+put 016 m
+put 017 n
+put 018 o
+put 019 p
+put 020 u
+put 021 v
+put 022 w
+put 023 x
+put 024 y
+put 025 z
+close

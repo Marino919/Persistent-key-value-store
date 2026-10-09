@@ -14,6 +14,8 @@ typedef struct KVStore {
     Entry **buckets;
     size_t capacity;
     size_t count;
+    FILE *log;
+    char *path;
 } KVStore;
 
 

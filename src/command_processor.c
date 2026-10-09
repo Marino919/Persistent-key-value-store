@@ -8,7 +8,7 @@
 #include "remove.h"
 
 void process_command(KVStore *kvs, char buffer[1024]) {
-    const char *delim = " ";
+    const char *delim = " \t\n";
     char *command = strtok(buffer, delim);
 
     printf("\ncommand given for executing: %s", command);

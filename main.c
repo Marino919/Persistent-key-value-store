@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage : %s <argument>\n", argv[0]);
         return 1;
     }
-    KVStore *kvs= kv_open(argv[1]);
+    KVStore *kvs= kv_open("tests_commands/6_test_commands.bin");
     if (kvs == NULL) {
         printf("kv_open FAILED (store opening)");
         return 1;
@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 
         buffer[strcspn(buffer, "\n")] = '\0';
         process_command(kvs, buffer);
+
     }
 
     return 0;
