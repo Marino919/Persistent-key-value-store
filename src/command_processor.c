@@ -104,6 +104,7 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         return -1;
     }
 
+    printf("\nThat is not a command!");
     return 0;
 
 }
