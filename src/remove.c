@@ -13,16 +13,6 @@ static int table_remove(KVStore *kvs, const char *key) {
         return 1;
     }
 
-    if (delete_entry->entry == NULL) {
-        Entry *e = find_entry_superlink(kvs, delete_entry);
-        e->entry = NULL;
-        free(delete_entry->key);
-        free(delete_entry->value);
-        free(delete_entry);
-        delete_entry = NULL;
-        return 0;
-    }
-
     const size_t bucket_index = hash(key) % kvs->capacity;
 
     if (is_first_in_chain(kvs, delete_entry) == 0 && delete_entry->entry == NULL) {
@@ -30,6 +20,7 @@ static int table_remove(KVStore *kvs, const char *key) {
         free(delete_entry->value);
         free(delete_entry);
         kvs->buckets[bucket_index] = NULL;
+        kvs->count--;
         return 0;
     }
 
@@ -39,23 +30,32 @@ static int table_remove(KVStore *kvs, const char *key) {
         free(delete_entry->value);
         free(delete_entry);
         kvs->buckets[bucket_index] = rebase_entry;
+        kvs->count--;
         return 0;
     }
 
-    if (is_first_in_chain(kvs, delete_entry) != 0) {
+    if (is_first_in_chain(kvs, delete_entry) != 0 && rebase_entry != NULL) {
         free(delete_entry->key);
         free(delete_entry->value);
         delete_entry->key = rebase_entry->key;
         delete_entry->value = rebase_entry->value;
         delete_entry->entry = rebase_entry->entry;
+        free(rebase_entry);
+        kvs->count--;
+        return 0;
+    }
 
+    if (is_first_in_chain(kvs, delete_entry) != 0 && rebase_entry == NULL) {
+        Entry *superlink = find_entry_superlink(kvs, delete_entry);
+        free(delete_entry->key);
+        free(delete_entry->value);
+        free(superlink->entry);
+        superlink->entry = NULL;
+        kvs->count--;
         return 0;
     }
 
     printf("ERROR: something went wrong while deleting this entry: %s", delete_entry->key);
-
-
-    kvs->count--;
     return 0;
 }
 

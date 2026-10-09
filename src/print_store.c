@@ -8,7 +8,7 @@ void kv_print_store(KVStore *kvs) {
         printf("\nERROR: Unable to print store");
         return;
     }
-    printf("\nPrinting current store: ");
+    printf("\nPrinting current store (capacity = %lu): ", kvs->capacity);
     for (size_t i = 0; i < kvs->capacity; i++) {
         printf("\n>");
         Entry *ent = (kvs->buckets)[i];

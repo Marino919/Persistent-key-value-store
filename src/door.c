@@ -45,8 +45,8 @@ KVStore *kv_open( const char *path ) {
             process_command(kvs, command);
         }
     }
-    printf("\n File loaded!");
-    kv_print_store(kvs);
+    printf("\nStore loaded!\n");
+    //kv_print_store(kvs);
     free(command);
     fclose(kvs->log);
     fopen(kvs->path, "ab");
@@ -66,10 +66,14 @@ static void close_chain(Entry *chain) {
 }
 
 void kv_close( KVStore *kvs) {
+    if (kvs == NULL) {
+        return;
+    }
     for (size_t i = 0; i < kvs->capacity; i++) {
         close_chain((kvs->buckets)[i]);
     }
     free(kvs->buckets);
+    fclose(kvs->log);
     kvs = NULL;
     free(kvs);
 }

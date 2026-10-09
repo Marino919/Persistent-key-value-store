@@ -2,5 +2,5 @@
 #define PERSISTENT_KEY_VALUE_STORE_COMMAND_PROCESSOR_H
 #include "helpers.h"
 
-void process_command(KVStore *kvs, char buffer[1024]);
+int process_command(KVStore *kvs, char buffer[1024]);
 #endif //PERSISTENT_KEY_VALUE_STORE_COMMAND_PROCESSOR_H

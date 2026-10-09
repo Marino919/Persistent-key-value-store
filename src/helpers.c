@@ -48,7 +48,7 @@ int is_first_in_chain(KVStore *kvs, Entry *e) {
         size_t hash1 = hash(kvs->buckets[i]->key);
         size_t hash2 = hash(e->key);
 
-        if ( hash1 == hash2) {
+        if ( hash1 == hash2 && strcmp(kvs->buckets[i]->key, e->key) == 0) {
             return 0;
         }
     }
@@ -58,6 +58,9 @@ int is_first_in_chain(KVStore *kvs, Entry *e) {
 Entry *find_entry_superlink(KVStore *kvs, Entry *e) {
     const size_t bucket_index = hash(e->key) % kvs->capacity;
     Entry *chain = (kvs->buckets)[bucket_index];
+    if (e == chain) {
+        return chain;
+    }
     while (chain != NULL && strcmp(chain->entry->key, e->key) != 0 ) {
         chain = chain->entry;
     }
