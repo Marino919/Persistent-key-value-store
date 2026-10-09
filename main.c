@@ -2,11 +2,8 @@
 
 #include "kv_basic.h"
 
-int main(int argc, char *argv[]) {
-    if (argc < 2) {
-        fprintf(stderr, "Usage : %s <argument>\n", argv[0]);
-        return 1;
-    }
+int main(void) {
+
     char *storename = calloc(1019, sizeof(char));
     if (storename == NULL) {
         return 1;
