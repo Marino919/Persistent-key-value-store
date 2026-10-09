@@ -8,4 +8,5 @@
 #include "print_store.h"
 #include "put.h"
 #include "remove.h"
+#include "command_processor.h"
 #endif //KVSTORE_KV_BASIC_H

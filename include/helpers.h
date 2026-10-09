@@ -2,6 +2,7 @@
 #define KVSTORE_HELPERS_H
 
 #define INITIAL_CAPACITY 2
+#include <stdio.h>
 
 typedef struct Entry {
     char *key;

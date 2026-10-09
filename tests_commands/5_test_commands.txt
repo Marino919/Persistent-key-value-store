@@ -57,4 +57,12 @@ delete 007
 delete 001
 delete 014
 delete 015
+get 015
+get 021
+get 024
+get 000
+get 012
+get 013
+get 014
+get 015
 close

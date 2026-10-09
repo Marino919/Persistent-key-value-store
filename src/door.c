@@ -17,7 +17,8 @@ KVStore *kv_open( const char *path ) {
         free(kvs);
         return NULL;
     }
-
+    //kvs->path = dup_string(path);
+    //kvs->log = fopen(kvs->path, "rb");
     return kvs;
 }
 

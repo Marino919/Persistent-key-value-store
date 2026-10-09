@@ -10,7 +10,8 @@ option(SANITIZE "Build with AddressSanitizer and UBSan" ON)
 # The store itself: every .c file in src/
 file(GLOB KV_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.c")
 
-add_library(kvstore STATIC ${KV_SOURCES})
+add_library(kvstore STATIC ${KV_SOURCES}
+        src/command_processor.c)
 target_include_directories(kvstore PUBLIC "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(kvstore PUBLIC -Wall -Wextra -Wpedantic -g)
 
@@ -21,7 +22,8 @@ endif()
 
 # The terminal app
 add_executable(kv main.c
-        include/kv_basic.h)
+        include/kv_basic.h
+        include/command_processor.h)
 target_link_libraries(kv PRIVATE kvstore)
 
 # The random stress test (only built once stress.c exists)
