@@ -43,6 +43,5 @@ int main(void) {
         kv_close(kvs);
     }
 
-
     return 0;
 }

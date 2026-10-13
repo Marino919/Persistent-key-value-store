@@ -1,0 +1,7 @@
+#ifndef PERSISTENT_KEY_VALUE_STORE_OPTIMIZE_LOG_H
+#define PERSISTENT_KEY_VALUE_STORE_OPTIMIZE_LOG_H
+#include "helpers.h"
+
+int optimize_log(KVStore *kvs);
+
+#endif //PERSISTENT_KEY_VALUE_STORE_OPTIMIZE_LOG_H

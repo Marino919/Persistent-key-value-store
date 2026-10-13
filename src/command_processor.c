@@ -8,6 +8,7 @@
 #include "print_store.h"
 #include "put.h"
 #include "remove.h"
+#include "optimize_log.h"
 
 static void log_command(KVStore *kvs, char *command) {
 
@@ -37,17 +38,17 @@ int process_command(KVStore *kvs, char buffer[1024]) {
     if (strcmp(command, "delete") == 0) {
         char *key = strtok(NULL, delim);
         if (key == NULL) {
-            printf("\n-> No key specified\n");
+            printf("-> No key specified\n");
             return 0;
         }
-        printf("\n-> Deleting key %s", key);
+        printf("-> Deleting key %s", key);
         int success = kv_delete(kvs, key);
         if (success == 0) {
             printf("\n-> key [%s] deleted\n", key);
             log_command(kvs, full_command);
             return 1;
         }
-        printf("\n-> key not found or an error happened\n");
+        printf("-> key not found or an error happened\n");
 
         return 0;
     }
@@ -57,15 +58,15 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         char *key = strtok(NULL, delim);
         char *value = strtok(NULL, "\n");
         if (key == NULL) {
-            printf("\n-> No key specified\n");
+            printf("-> No key specified\n");
             return 0;
         }
         if (value == NULL) {
-            printf("\n-> No value specified\n");
+            printf("-> No value specified\n");
             return 0;
         }
         int success = kv_put(kvs, key, value);
-        printf("\n-> Putting value %s in %s", value, key);
+        printf("-> Putting value %s in %s", value, key);
         if (success == 0) {
             log_command(kvs, full_command);
             printf("\n-> Putting successfull\n");
@@ -80,15 +81,15 @@ int process_command(KVStore *kvs, char buffer[1024]) {
     if (strcmp(command, "get") == 0) {
         char *key = strtok(NULL, delim);
         if (key == NULL) {
-            printf("\n-> No key specified\n");
+            printf("-> No key specified\n");
             return 0;
         }
         const char *value = kv_get(kvs, key);
         if (value == NULL) {
-            printf("\n ERROR: key doesnt exist\n");
+            printf("ERROR: key doesnt exist\n");
             return 0;
         }
-        printf("\nENTRY: [%s]-{%s}\n", key, value);
+        printf("ENTRY: [%s]-{%s}\n", key, value);
 
         return 3;
     }
@@ -104,7 +105,16 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         return -1;
     }
 
-    printf("\nThat is not a command!");
+    if (strcmp(command, "optlog") == 0) {
+        int success = optimize_log(kvs);
+        if (success == 0) {
+            printf("Log successfuly optimized!\n");
+            return 0;
+        }
+        return 1;
+    }
+
+    printf("That is not a command!\n");
     return 0;
 
 }
