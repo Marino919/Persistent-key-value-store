@@ -2,6 +2,8 @@
 #define KVSTORE_HELPERS_H
 
 #define INITIAL_CAPACITY 2
+#define MAX_VALUE_LEN 1024
+#define MAX_KEY_LEN 1024
 #include <stdio.h>
 
 typedef struct Entry {

@@ -12,7 +12,8 @@ file(GLOB KV_SOURCES CONFIGURE_DEPENDS "${CMAKE_SOURCE_DIR}/src/*.c")
 
 add_library(kvstore STATIC ${KV_SOURCES}
         src/command_processor.c
-        src/optimize_log.c)
+        src/optimize_log.c
+        src/endian.c)
 target_include_directories(kvstore PUBLIC "${CMAKE_SOURCE_DIR}/include")
 target_compile_options(kvstore PUBLIC -Wall -Wextra -Wpedantic -g)
 
@@ -25,7 +26,10 @@ endif()
 add_executable(kv main.c
         include/kv_basic.h
         include/command_processor.h
-        include/optimize_log.h)
+        include/optimize_log.h
+        include/endian.h
+        src/endian.c
+)
 target_link_libraries(kv PRIVATE kvstore)
 
 # The random stress test (only built once stress.c exists)

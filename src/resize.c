@@ -8,7 +8,7 @@
 int needs_resize(const KVStore *kvs) {
 
     const size_t threshold = ((kvs->count)+1) * 4 / kvs->capacity * 3;
-    printf("\nThreshold: %lu", threshold);
+    //printf("\nThreshold: %lu", threshold);
     if (threshold > 75) {
         return 1;
     }

@@ -38,9 +38,9 @@ static int table_set(KVStore *kvs, const char *key, const char *value) {
     }
 
     if ( needs_resize(kvs) ) {
-        printf("\nResizing table...");
+        //printf("\nResizing table...");
         table_resize(kvs);
-        printf("done!");
+        //printf("done! \n");
     }
 
     new_entry->key = new_key;

@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "door.h"
+#include "endian.h"
 #include "get.h"
 #include "helpers.h"
 #include "print_store.h"
@@ -10,12 +11,37 @@
 #include "remove.h"
 #include "optimize_log.h"
 
+#define OP_PUT 1
+#define OP_DELETE 2
+
 static void log_command(KVStore *kvs, char *command) {
 
-    const uint32_t len = (uint32_t)strlen(command);
-    fwrite(command, sizeof(char), len, kvs->log);
+    char *op = strtok(command, " \t");
+    char *key = strtok(NULL, " \t");
+    char *value = strtok(NULL, " \t\n");
+    uint8_t operation = 0;
+    if (strcmp(op, "put") == 0) {
+        operation = OP_PUT;
+    } else {
+        operation = OP_DELETE;
+    }
+    uint8_t key_len[4] = {0};
+    uint8_t value_len[4] = {0};
+    uint32_t key_len_32 = strlen(key);
+    uint32_t value_len_32 = value ? strlen(value) : 0;
+    put_u32_le(key_len, key_len_32);
+    put_u32_le(value_len, value_len_32);
+
+    uint8_t data[9] = {operation,
+                        key_len[0], key_len[1], key_len[2], key_len[3],
+                        value_len[0], value_len[1], value_len[2], value_len[3]};//only header
+
+    fwrite(data, sizeof(uint8_t), 9, kvs->log);
+    fwrite(key, sizeof(uint8_t), key_len_32, kvs->log);
+    if (value_len_32 > 0) {
+        fwrite(value, sizeof(uint8_t), value_len_32, kvs->log);
+    }
     fflush(kvs->log);
-    return ;
 }
 
 int process_command(KVStore *kvs, char buffer[1024]) {

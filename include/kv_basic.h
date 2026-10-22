@@ -9,4 +9,5 @@
 #include "put.h"
 #include "remove.h"
 #include "command_processor.h"
+#include "endian.h"
 #endif //KVSTORE_KV_BASIC_H
