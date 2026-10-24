@@ -17,7 +17,7 @@
 static void log_command(KVStore *kvs, char *command) {
 
     char *op = strtok(command, " \t");
-    char *key = strtok(NULL, " \t");
+    char *key = strtok(NULL, " \t\n");
     char *value = strtok(NULL, " \t\n");
     uint8_t operation = 0;
     if (strcmp(op, "put") == 0) {
