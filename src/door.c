@@ -38,11 +38,11 @@ static int read_record(KVStore *kvs, uint8_t data[9]) {
         if (value_len32 != val_len) goto done;
         value[value_len32] = '\0';
 
-        int success = kv_put(kvs, key, value);
+        int success = table_set(kvs, key, value);
         if ( success != 0) goto done;
 
     } else if (op == 2 && value_len32 == 0) {
-        int success = kv_delete(kvs, key);
+        int success = table_remove(kvs, key);
         if ( success != 0) goto done;
     }
 
@@ -70,7 +70,7 @@ KVStore *kv_open( const char *path ) {
     kvs->log = fopen(kvs->path, "rb");
     if (kvs->log != NULL) {
 
-        printf("\nLoading store...");
+        printf("Loading store...");
         uint8_t data[9] = {0};
         size_t num_data = fread(data, sizeof(uint8_t), 9, kvs->log);
         while (num_data != 0 && num_data == 9) {

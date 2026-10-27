@@ -29,11 +29,14 @@ add_executable(kv main.c
         include/optimize_log.h
         include/endian.h
         src/endian.c
+        include/log_command.h
+        src/log_command.c
 )
 target_link_libraries(kv PRIVATE kvstore)
 
 # The random stress test (only built once stress.c exists)
 if(EXISTS "${CMAKE_SOURCE_DIR}/stress.c")
-    add_executable(stress stress.c)
+    add_executable(stress stress.c
+            stress.c)
     target_link_libraries(stress PRIVATE kvstore)
 endif()

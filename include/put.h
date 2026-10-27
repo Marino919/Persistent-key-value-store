@@ -3,5 +3,6 @@
 #include "helpers.h"
 
 int kv_put( KVStore *kvs, const char *key, const char *value);
+int table_set(KVStore *kvs, const char *key, const char *value);
 
 #endif //KVSTORE_PUT_H

@@ -5,11 +5,15 @@
 #include "../include/helpers.h"
 #include "../include/remove.h"
 
+#include <string.h>
 
-static int table_remove(KVStore *kvs, const char *key) {
+#include "log_command.h"
+
+
+int table_remove(KVStore *kvs, const char *key) {
     Entry *delete_entry = find_entry(kvs, key);
     if (delete_entry == NULL) {
-        printf("\n ERROR: key not found");
+        printf("\nERROR: key not found");
         return 1;
     }
 
@@ -55,11 +59,15 @@ static int table_remove(KVStore *kvs, const char *key) {
         return 0;
     }
 
-    printf("ERROR: something went wrong while deleting this entry: %s", delete_entry->key);
+    printf("\nERROR: something went wrong while deleting this entry: %s", delete_entry->key);
     return 0;
 }
 
 int kv_delete( KVStore *kvs, const char *key) {
-    int success = table_remove(kvs, key);
+    int success = log_command(kvs, OP_DELETE, key, NULL);
+    if (success != 0) {
+        return 1;
+    }
+    success = table_remove(kvs, key);
     return success;
 }

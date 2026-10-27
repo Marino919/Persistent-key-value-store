@@ -38,7 +38,6 @@ int main(void) {
         result = process_command(kvs, buffer);
 
     }
-
     if (result != -1) {
         kv_close(kvs);
     }

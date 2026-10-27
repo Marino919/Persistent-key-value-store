@@ -4,6 +4,8 @@
 #define INITIAL_CAPACITY 2
 #define MAX_VALUE_LEN 1024
 #define MAX_KEY_LEN 1024
+#define OP_PUT 1
+#define OP_DELETE 2
 #include <stdio.h>
 
 typedef struct Entry {

@@ -8,7 +8,7 @@ int optimize_log(KVStore *kvs) {
     FILE *source = fopen(kvs->path, "rb");
 
     if (source == NULL) {
-        printf("\n ERROR: file not found");
+        printf("ERROR: file not found");
         return 1;
     }
     FILE *temp = fopen("temp.bin", "wb");

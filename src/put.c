@@ -6,7 +6,9 @@
 #include "../include/resize.h"
 #include "../include/put.h"
 
-static int table_set(KVStore *kvs, const char *key, const char *value) {
+#include "log_command.h"
+
+int table_set(KVStore *kvs, const char *key, const char *value) {
 
     char *new_value = dup_string(value);
     if (new_value == NULL) {
@@ -63,6 +65,10 @@ static int table_set(KVStore *kvs, const char *key, const char *value) {
 }
 
 int kv_put( KVStore *kvs, const char *key, const char *value) {
-    int success = table_set(kvs, key, value);
+    int success = log_command(kvs, OP_PUT, key, value);
+    if (success != 0) {
+        return 1;
+    }
+    success = table_set(kvs, key, value);
     return success;
 }
