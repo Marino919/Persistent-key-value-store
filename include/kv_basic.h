@@ -10,4 +10,5 @@
 #include "remove.h"
 #include "command_processor.h"
 #include "endian.h"
+#include "crc32.h"
 #endif //KVSTORE_KV_BASIC_H
