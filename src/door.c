@@ -70,7 +70,7 @@ KVStore *kv_open( const char *path ) {
     kvs->log = fopen(kvs->path, "rb");
     if (kvs->log != NULL) {
 
-        printf("Loading store...");
+        //printf("Loading store...");
         uint8_t data[9] = {0};
         size_t num_data = fread(data, sizeof(uint8_t), 9, kvs->log);
         while (num_data != 0 && num_data == 9) {
@@ -89,7 +89,7 @@ KVStore *kv_open( const char *path ) {
 
     kvs->log = fopen(kvs->path, "ab");
     if (kvs->log == NULL) goto err;
-    printf("\nLog open, ready to write! \n");
+    //printf("\nLog open, ready to write! \n");
 
     return kvs;
     err:

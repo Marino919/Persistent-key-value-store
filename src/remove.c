@@ -9,12 +9,12 @@
 
 #include "log_command.h"
 
-
+//returns -1 or 0
 int table_remove(KVStore *kvs, const char *key) {
     Entry *delete_entry = find_entry(kvs, key);
     if (delete_entry == NULL) {
-        printf("\nERROR: key not found");
-        return 1;
+        //printf("\nWARNING: key not found");
+        return 0;
     }
 
     const size_t bucket_index = hash(key) % kvs->capacity;
@@ -60,14 +60,14 @@ int table_remove(KVStore *kvs, const char *key) {
     }
 
     printf("\nERROR: something went wrong while deleting this entry: %s", delete_entry->key);
-    return 0;
+    return -1;
 }
 
 int kv_delete( KVStore *kvs, const char *key) {
-    int success = log_command(kvs, OP_DELETE, key, NULL);
-    if (success != 0) {
-        return 1;
-    }
+    Entry *e = find_entry(kvs, key);
+    if ( e == NULL) return -1;
+    int success = log_command(kvs->log, OP_DELETE, key, NULL);
+    if (success < 0) return -1;
     success = table_remove(kvs, key);
-    return success;
+    return success;//-1 or 0
 }

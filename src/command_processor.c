@@ -36,11 +36,11 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         int success = kv_delete(kvs, key);
         if (success == 0) {
             printf("-> key [%s] deleted\n", key);
-            return 1;
+            return 0;
         }
-        printf("-> key not found or an error happened\n");
 
-        return 0;
+        printf("-> key not found or an error happened\n");
+        return -1;
     }
 
 
@@ -59,11 +59,10 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         //printf("-> Putting value %s in %s", value, key);
         if (success == 0) {
             printf("-> Putting successfull\n");
-            return 2;
+            return 0;
         }
         printf("->Putting is NOT successfull\n");
-
-        return 0;
+        return -1;
     }
 
 
@@ -76,22 +75,21 @@ int process_command(KVStore *kvs, char buffer[1024]) {
         const char *value = kv_get(kvs, key);
         if (value == NULL) {
             printf("ERROR: key doesnt exist\n");
-            return 0;
+            return -1;
         }
         printf("ENTRY: [%s]-{%s}\n", key, value);
-
-        return 3;
+        return 0;
     }
 
     if (strcmp(op, "pstore") == 0) {
         kv_print_store(kvs);
-        return 4;
+        return 0;
     }
 
     if (strcmp(op, "close") == 0) {
         kv_print_store(kvs);
         kv_close(kvs);
-        return -1;
+        return 0;
     }
 
     if (strcmp(op, "optlog") == 0) {
@@ -100,7 +98,7 @@ int process_command(KVStore *kvs, char buffer[1024]) {
             printf("Log successfuly optimized!\n");
             return 0;
         }
-        return 1;
+        return -1;
     }
 
     printf("That is not a command!\n");

@@ -6,7 +6,8 @@
 #define DATA_FIELD_N 9
 
 
-int log_command(KVStore *kvs, uint8_t operation, const char *key, const char *value){
+//returns -1 or 0
+int log_command(FILE *log, uint8_t operation, const char *key, const char *value){
 
     uint8_t key_len[4] = {0};
     uint8_t value_len[4] = {0};
@@ -20,13 +21,13 @@ int log_command(KVStore *kvs, uint8_t operation, const char *key, const char *va
                         key_len[0], key_len[1], key_len[2], key_len[3],
                         value_len[0], value_len[1], value_len[2], value_len[3]};//only header
 
-    if (fwrite(data, sizeof(uint8_t), DATA_FIELD_N, kvs->log) != DATA_FIELD_N) return 1;
-    if (fwrite(key, sizeof(uint8_t), key_len_32, kvs->log) != key_len_32) return 1;
+    if (fwrite(data, sizeof(uint8_t), DATA_FIELD_N, log) != DATA_FIELD_N) return -1;
+    if (fwrite(key, sizeof(uint8_t), key_len_32, log) != key_len_32) return -1;
     if (value_len_32 > 0) {
-        if (fwrite(value, sizeof(uint8_t), value_len_32, kvs->log) != value_len_32) return 1;
+        if (fwrite(value, sizeof(uint8_t), value_len_32, log) != value_len_32) return -1;
     }
 
-    if (fflush(kvs->log) != 0) return 1;
+    if (fflush(log) != 0) return -1;
 
     return 0;
 }

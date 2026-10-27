@@ -8,6 +8,7 @@
 
 #include "log_command.h"
 
+//returns -1 or 0
 int table_set(KVStore *kvs, const char *key, const char *value) {
 
     char *new_value = dup_string(value);
@@ -19,7 +20,7 @@ int table_set(KVStore *kvs, const char *key, const char *value) {
 
     Entry *existing = find_entry(kvs, key);
     if (existing != NULL) {//already existing key
-        printf("\nWARNING: key already exists, the value has been updated");
+        //printf("\nWARNING: key already exists, the value has been updated");
         free(existing->value);
         existing->value = new_value;
         return 0;
@@ -64,11 +65,10 @@ int table_set(KVStore *kvs, const char *key, const char *value) {
     return 0;
 }
 
+//returns -1 or 0
 int kv_put( KVStore *kvs, const char *key, const char *value) {
-    int success = log_command(kvs, OP_PUT, key, value);
-    if (success != 0) {
-        return 1;
-    }
+    int success = log_command(kvs->log, OP_PUT, key, value);
+    if (success < 0) return -1;
     success = table_set(kvs, key, value);
-    return success;
+    return success;//-1 or 0
 }
