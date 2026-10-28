@@ -1,12 +1,5 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "../include/helpers.h"
-#include "../include/remove.h"
-
-#include <string.h>
-
+#include "remove.h"
+#include "helpers.h"
 #include "log_command.h"
 
 //returns -1 or 0

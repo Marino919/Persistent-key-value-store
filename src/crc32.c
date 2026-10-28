@@ -1,5 +1,6 @@
-#include <stddef.h>
-#include <stdint.h>
+#include "crc32.h"
+#include "helpers.h"
+
 
 uint32_t crc32(const uint8_t *data, size_t len) {
     uint32_t crc = 0xFFFFFFFF;

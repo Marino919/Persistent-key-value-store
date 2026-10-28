@@ -1,10 +1,7 @@
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "crc32.h"
 #include "endian.h"
 #include "helpers.h"
+#include "log_command.h"
 
 
 //returns -1 or 0

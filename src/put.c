@@ -1,11 +1,6 @@
-#include <stddef.h>
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "../include/helpers.h"
-#include "../include/resize.h"
-#include "../include/put.h"
-
+#include "put.h"
+#include "helpers.h"
+#include "resize.h"
 #include "log_command.h"
 
 //returns -1 or 0

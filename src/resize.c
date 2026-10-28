@@ -1,9 +1,5 @@
-#include <stdio.h>
-
-#include "../include/helpers.h"
-#include "../include/resize.h"
-
-#include <stdlib.h>
+#include "helpers.h"
+#include "resize.h"
 
 int needs_resize(const KVStore *kvs) {
 

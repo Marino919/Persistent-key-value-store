@@ -1,7 +1,4 @@
-#include <stdint.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include "command_processor.h"
 #include "door.h"
 #include "get.h"
 #include "helpers.h"

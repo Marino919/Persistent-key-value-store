@@ -1,9 +1,4 @@
-#include <stdlib.h>
-#include <string.h>
-
-#include "../include/helpers.h"
-
-#include <stdio.h>
+#include "helpers.h"
 
 char *dup_string(const char *string) {
     const size_t len = strlen(string);

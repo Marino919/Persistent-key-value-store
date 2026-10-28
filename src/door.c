@@ -1,14 +1,7 @@
-#include <stdlib.h>
-
-#include "../include/helpers.h"
-#include "../include/door.h"
-
-#include <string.h>
-
-#include "command_processor.h"
+#include "door.h"
+#include "helpers.h"
 #include "crc32.h"
 #include "endian.h"
-#include "helpers.h"
 #include "put.h"
 #include "remove.h"
 

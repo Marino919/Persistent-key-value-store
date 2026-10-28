@@ -1,8 +1,6 @@
+#include "print_store.h"
+#include "helpers.h"
 
-#include <stddef.h>
-#include <stdio.h>
-
-#include "../include/helpers.h"
 void kv_print_store(KVStore *kvs) {
     if (kvs == NULL) {
         printf("\nERROR: Unable to print store");

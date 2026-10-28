@@ -1,5 +1,6 @@
 #ifndef KVSTORE_DOOR_H
 #define KVSTORE_DOOR_H
+
 #include "helpers.h"
 
 KVStore *kv_open( const char *path );

@@ -1,9 +1,6 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "helpers.h"
+#include "optimize_log.h"
 #include "log_command.h"
+#include "helpers.h"
 
 int optimize_log(KVStore *kvs) {
     FILE *temp = fopen("temp.bin", "wb");

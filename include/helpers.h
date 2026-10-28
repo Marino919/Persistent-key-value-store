@@ -1,13 +1,18 @@
 #ifndef KVSTORE_HELPERS_H
 #define KVSTORE_HELPERS_H
 
+#include <stddef.h>
+#include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #define INITIAL_CAPACITY 2
 #define MAX_VALUE_LEN 1024
 #define MAX_KEY_LEN 1024
 #define OP_PUT 1
 #define OP_DELETE 2
 #define HEADER_N 13
-#include <stdio.h>
 
 typedef struct Entry {
     char *key;
