@@ -6,15 +6,18 @@
 #include <string.h>
 
 #include "command_processor.h"
+#include "crc32.h"
 #include "endian.h"
 #include "helpers.h"
 #include "put.h"
 #include "remove.h"
 
-static int read_record(KVStore *kvs, uint8_t data[9]) {
-    uint8_t op = data[0];
-    uint32_t key_len32 = get_u32_le(&data[1]);
-    uint32_t value_len32 = get_u32_le(&data[5]);
+static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
+    uint32_t crc32_given = get_u32_le(&data[0]);
+    uint8_t op = data[4 + 0];
+    uint32_t key_len32 = get_u32_le(&data[4 + 1]);
+    uint32_t value_len32 = get_u32_le(&data[4 + 5]);
+    uint8_t *unprotected_data = NULL;
     char *key = NULL;
     char *value = NULL;
     int ok = 1;
@@ -38,20 +41,39 @@ static int read_record(KVStore *kvs, uint8_t data[9]) {
         if (value_len32 != val_len) goto done;
         value[value_len32] = '\0';
 
+        size_t unpr_data_n = HEADER_N - 4 + key_len32 + value_len32;
+        unprotected_data = calloc(unpr_data_n, sizeof(uint8_t));
+        if (unprotected_data == NULL) goto done;
+        memcpy(unprotected_data, &data[4 + 0], HEADER_N-4);
+        memcpy(unprotected_data+HEADER_N-4, key, key_len32);
+        memcpy(unprotected_data+HEADER_N-4+key_len32, value, value_len32);
+        uint32_t calculated_crc32 = crc32(unprotected_data, unpr_data_n);
+        if (calculated_crc32 != crc32_given) goto done;
+
         int success = table_set(kvs, key, value);
-        if ( success != 0) goto done;
+        if ( success < 0) goto done;
 
     } else if (op == 2 && value_len32 == 0) {
+
+        size_t unpr_data_n = HEADER_N - 4 + key_len32;
+        unprotected_data = calloc(unpr_data_n, sizeof(uint8_t));
+        if (unprotected_data == NULL) goto done;
+        memcpy(unprotected_data, &data[4 + 0], HEADER_N-4);
+        memcpy(unprotected_data+HEADER_N-4, key, key_len32);
+        uint32_t calculated_crc32 = crc32(unprotected_data, unpr_data_n);
+        if (calculated_crc32 != crc32_given) goto done;
+
         int success = table_remove(kvs, key);
-        if ( success != 0) goto done;
+        if ( success < 0) goto done;
     }
 
     ok = 0;
 
     done:
-        free(key);
-        free(value);
-        return ok;
+    free(unprotected_data);
+    free(key);
+    free(value);
+    return ok;
 }
 
 
@@ -71,12 +93,12 @@ KVStore *kv_open( const char *path ) {
     if (kvs->log != NULL) {
 
         //printf("Loading store...");
-        uint8_t data[9] = {0};
-        size_t num_data = fread(data, sizeof(uint8_t), 9, kvs->log);
-        while (num_data != 0 && num_data == 9) {
+        uint8_t data[HEADER_N] = {0};
+        size_t num_data = fread(data, sizeof(uint8_t), HEADER_N, kvs->log);
+        while (num_data != 0 && num_data == HEADER_N) {
             int success = read_record(kvs, data);
             if (success != 0) goto err;
-            num_data = fread(data, sizeof(uint8_t), 9, kvs->log);
+            num_data = fread(data, sizeof(uint8_t), HEADER_N, kvs->log);
         }
 
         if (num_data != 0) goto err;
@@ -84,7 +106,7 @@ KVStore *kv_open( const char *path ) {
         kvs->log = NULL;
 
     } else {
-        printf("Creating new store...\n");
+        //printf("Creating new store...\n");
     }
 
     kvs->log = fopen(kvs->path, "ab");

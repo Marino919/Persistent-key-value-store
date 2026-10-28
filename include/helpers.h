@@ -6,6 +6,7 @@
 #define MAX_KEY_LEN 1024
 #define OP_PUT 1
 #define OP_DELETE 2
+#define HEADER_N 13
 #include <stdio.h>
 
 typedef struct Entry {

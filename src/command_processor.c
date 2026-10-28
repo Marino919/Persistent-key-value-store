@@ -89,7 +89,7 @@ int process_command(KVStore *kvs, char buffer[1024]) {
     if (strcmp(op, "close") == 0) {
         kv_print_store(kvs);
         kv_close(kvs);
-        return 0;
+        return -1;
     }
 
     if (strcmp(op, "optlog") == 0) {
