@@ -1,15 +1,9 @@
-This is persistent key-value storage project coded in C.
-It allows storing key-value pairs, and later recalling them,
-the persistent part is that closing the program doesn't lose the store.
-When the program is opened it asks for the name of the store
-you want to open. When you give it a name it opens that store 
-and reconstructs it for faster lookup. If the name doesn't exists 
-it makes a new store. The program stores the key-value pairs inside
-of the log file. The log file consists of "put" and "delete" commands
-When the store is opened every command is executed into the fast 
-lookup no-persistence store which the program uses. This recreates 
-the store that was made during the last session. The log file is
-constantly updated to match the content of the store. 
+This is persistent key-value store project coded in C. It stores key value pairs in memory and on a binary file. Multiple stores can be created and managed. The binary log file consists of "put" and "delete" commands. When the store is opened every command is executed into the memory store. This recreates the store that was made during the last session. The log file is constantly updated to match the content of the store. The store is crash proof (deletes half written records at the end of the file) and corruption proof (CRC code used for detection of corruption, the program refuses to open the store). 
+
+The record format (in bytes) inside the file is the following:
+
+| (4) CRC | (1) OPERATION (put or delete) | (4) key length | (4) value length | (KL) key | (VL) value | 
+
 The following commands are available inside of the store:
 - put [key] [value] -  enter a key-value pair
 - get [key]         -  get value paired with specified key 
