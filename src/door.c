@@ -5,7 +5,7 @@
 #include "put.h"
 #include "remove.h"
 
-static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
+static int read_record(KVStore *kvs, uint8_t data[HEADER_N], long file_size) {
     uint32_t crc32_given = get_u32_le(&data[0]);
     uint8_t op = data[4 + 0];
     uint32_t key_len32 = get_u32_le(&data[4 + 1]);
@@ -13,7 +13,7 @@ static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
     uint8_t *unprotected_data = NULL;
     char *key = NULL;
     char *value = NULL;
-    int ok = 1;
+    int ok = REC_CORRUPT;
 
     if (op != 1 && op != 2) goto done;
     if (key_len32 > MAX_KEY_LEN || value_len32 > MAX_VALUE_LEN) goto done;
@@ -21,6 +21,8 @@ static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
 
     key = malloc((size_t)key_len32 + 1);
     if (key == NULL) goto done;
+
+    ok = REC_TORN;
 
     size_t key_len = fread(key, 1, key_len32, kvs->log);
     if (key_len != key_len32) goto done;
@@ -41,10 +43,19 @@ static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
         memcpy(unprotected_data+HEADER_N-4, key, key_len32);
         memcpy(unprotected_data+HEADER_N-4+key_len32, value, value_len32);
         uint32_t calculated_crc32 = crc32(unprotected_data, unpr_data_n);
-        if (calculated_crc32 != crc32_given) goto done;
+        long record_end = ftell(kvs->log);
+        if (calculated_crc32 != crc32_given && record_end < file_size) {
+            ok = REC_CORRUPT;
+            goto done;
+        }
+        if (calculated_crc32 != crc32_given && record_end == file_size) goto done;
 
         int success = table_set(kvs, key, value);
-        if ( success < 0) goto done;
+        if ( success < 0) {
+            ok = REC_CORRUPT;
+            goto done;
+        }
+
 
     } else if (op == 2 && value_len32 == 0) {
 
@@ -54,13 +65,22 @@ static int read_record(KVStore *kvs, uint8_t data[HEADER_N]) {
         memcpy(unprotected_data, &data[4 + 0], HEADER_N-4);
         memcpy(unprotected_data+HEADER_N-4, key, key_len32);
         uint32_t calculated_crc32 = crc32(unprotected_data, unpr_data_n);
-        if (calculated_crc32 != crc32_given) goto done;
+
+        long record_end = ftell(kvs->log);
+        if (calculated_crc32 != crc32_given && record_end < file_size) {
+            ok = REC_CORRUPT;
+            goto done;
+        }
+        if (calculated_crc32 != crc32_given && record_end == file_size) goto done;
 
         int success = table_remove(kvs, key);
-        if ( success < 0) goto done;
+        if ( success < 0) {
+            ok = REC_CORRUPT;
+            goto done;
+        }
     }
 
-    ok = 0;
+    ok = REC_OK;
 
     done:
     free(unprotected_data);
@@ -82,19 +102,37 @@ KVStore *kv_open( const char *path ) {
     if (kvs->buckets == NULL) goto err;
     kvs->path = dup_string(path);
     if (kvs->path == NULL) goto err;
-    kvs->log = fopen(kvs->path, "rb");
+    kvs->log = fopen(kvs->path, "rb+");
+
     if (kvs->log != NULL) {
 
+        fseek(kvs->log, 0, SEEK_END);
+        long file_size = ftell(kvs->log);
+        if (file_size == -1) goto err;
+        rewind(kvs->log);
+        int torn = REC_OK;
+
         //printf("Loading store...");
+        long good_end = ftell(kvs->log);
+        if (good_end == -1) goto err;
         uint8_t data[HEADER_N] = {0};
         size_t num_data = fread(data, sizeof(uint8_t), HEADER_N, kvs->log);
-        while (num_data != 0 && num_data == HEADER_N) {
-            int success = read_record(kvs, data);
-            if (success != 0) goto err;
+        while (num_data > 0 && !ferror(kvs->log)) { //&& num_data == HEADER_N
+            int success = read_record(kvs, data, file_size);
+            if ( num_data != HEADER_N ) success = REC_TORN;
+            if (success == REC_CORRUPT) goto err;
+            if (success == REC_TORN) {
+                torn = REC_TORN;
+                break;
+            }
+            good_end = ftell(kvs->log);
             num_data = fread(data, sizeof(uint8_t), HEADER_N, kvs->log);
         }
 
-        if (num_data != 0) goto err;
+        if ( ferror(kvs->log) ) goto err;
+        if (torn) {
+            if (truncate(kvs->path, (off_t)good_end) != 0) goto err;
+        }
         fclose(kvs->log);
         kvs->log = NULL;
 

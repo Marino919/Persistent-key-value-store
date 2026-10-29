@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #define INITIAL_CAPACITY 2
 #define MAX_VALUE_LEN 1024
@@ -13,6 +14,9 @@
 #define OP_PUT 1
 #define OP_DELETE 2
 #define HEADER_N 13
+#define REC_OK 0
+#define REC_TORN 1
+#define REC_CORRUPT 2
 
 typedef struct Entry {
     char *key;
