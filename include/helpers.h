@@ -17,6 +17,12 @@
 #define REC_OK 0
 #define REC_TORN 1
 #define REC_CORRUPT 2
+#define SIGNATURE "KVLG"
+#define LATEST_VERSION 1
+#define FILE_HEADER_N 8
+#define HEADER_READ_OK 0
+#define UNSUPPORTED_VERSION 1
+#define NOT_A_STORE_FILE 2
 
 typedef struct Entry {
     char *key;
@@ -32,7 +38,8 @@ typedef struct KVStore {
     char *path;
 } KVStore;
 
-
+int read_file_header(FILE *f);
+void write_file_header(FILE *f);
 char *dup_string(const char *string);
 size_t hash(const char *key);
 Entry *find_entry(const KVStore *kvs, const char*key);

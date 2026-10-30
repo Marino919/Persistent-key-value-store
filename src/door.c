@@ -103,6 +103,8 @@ KVStore *kv_open( const char *path ) {
     kvs->path = dup_string(path);
     if (kvs->path == NULL) goto err;
     kvs->log = fopen(kvs->path, "rb+");
+    uint8_t file_header[FILE_HEADER_N] = {0};
+    int header_found = 0;
 
     if (kvs->log != NULL) {
 
@@ -111,6 +113,20 @@ KVStore *kv_open( const char *path ) {
         if (file_size == -1) goto err;
         rewind(kvs->log);
         int torn = REC_OK;
+
+        //Checking header
+        if (file_size == 0) {
+            write_file_header(kvs->log);
+            fseek(kvs->log, 0, SEEK_END);
+            file_size = ftell(kvs->log);
+            if (file_size == -1) goto err;
+            rewind(kvs->log);
+        }
+        int header_check = read_file_header(kvs->log);
+        if (header_check == UNSUPPORTED_VERSION) goto err;
+        if (header_check == NOT_A_STORE_FILE) goto err;
+        if (header_check == -1) goto err;
+        header_found = 1;
 
         //printf("Loading store...");
         long good_end = ftell(kvs->log);
@@ -136,12 +152,20 @@ KVStore *kv_open( const char *path ) {
         fclose(kvs->log);
         kvs->log = NULL;
 
-    } else {
-        //printf("Creating new store...\n");
     }
 
-    kvs->log = fopen(kvs->path, "ab");
-    if (kvs->log == NULL) goto err;
+    if (header_found == 0) {
+        kvs->log = fopen(kvs->path, "ab");
+        if (kvs->log == NULL) goto err;
+
+        write_file_header(kvs->log);
+
+    } else {
+        kvs->log = fopen(kvs->path, "ab");
+        if (kvs->log == NULL) goto err;
+    }
+
+
     //printf("\nLog open, ready to write! \n");
 
     return kvs;

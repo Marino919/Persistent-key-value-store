@@ -8,6 +8,8 @@ int optimize_log(KVStore *kvs) {
         exit(1);
     }
 
+    write_file_header(temp);
+
     for (int i = 0; i < kvs->capacity; i++) {
         Entry *e = kvs->buckets[i];
         if (e == NULL) continue;

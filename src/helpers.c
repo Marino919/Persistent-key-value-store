@@ -1,5 +1,43 @@
 #include "helpers.h"
 
+void write_file_header(FILE *f) {
+    uint8_t file_header[FILE_HEADER_N] = {0};
+    file_header[0] = 'K';
+    file_header[1] = 'V';
+    file_header[2] = 'L';
+    file_header[3] = 'G';
+    file_header[4] = LATEST_VERSION;
+    size_t header_write_check = fwrite(file_header, sizeof(uint8_t), FILE_HEADER_N, f);
+    if (header_write_check != FILE_HEADER_N || ferror(f)) exit(1);
+    fflush(f);
+}
+
+
+int read_file_header(FILE *f) {
+    uint8_t file_header[FILE_HEADER_N] = {0};
+    int return_message = NOT_A_STORE_FILE;
+    char *signature = NULL;
+    size_t size_fh;
+
+    size_fh = fread(file_header, sizeof(uint8_t), FILE_HEADER_N, f);
+    if (size_fh != FILE_HEADER_N) goto done;
+    if ((int)file_header[4] != LATEST_VERSION) {
+        return_message = UNSUPPORTED_VERSION;
+        goto done;
+    }
+    signature = calloc(strlen(SIGNATURE)+1,  sizeof(uint8_t));
+    if (signature == NULL) return -1;
+    memcpy(signature, file_header, 4);
+    if (strcmp(SIGNATURE, signature) != 0) goto done;
+
+    return_message = HEADER_READ_OK;
+
+    done:
+    free(signature);
+    return return_message;
+
+}
+
 char *dup_string(const char *string) {
     const size_t len = strlen(string);
     char *retr_string = malloc((len+1)*sizeof(char));
